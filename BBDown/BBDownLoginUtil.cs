@@ -13,10 +13,10 @@ namespace BBDown;
 
 internal static class BBDownLoginUtil
 {
-    public static async Task<string> GetLoginStatusAsync(string qrcodeKey)
+    private static async Task<string> GetLoginStatusAsync(WebLoginSession session, string qrcodeKey)
     {
         string queryUrl = $"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcodeKey}&source=main-fe-header";
-        return await HTTPUtil.GetWebSourceAsync(queryUrl);
+        return await session.GetAsync(queryUrl);
     }
 
     public static async Task LoginWEB()
@@ -24,9 +24,15 @@ internal static class BBDownLoginUtil
         try
         {
             Log("获取登录地址...");
+            using var session = new WebLoginSession(HTTPUtil.UserAgent);
             string loginUrl = "https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header";
-            string url = JsonDocument.Parse(await HTTPUtil.GetWebSourceAsync(loginUrl)).RootElement.GetProperty("data").GetProperty("url").ToString();
-            string qrcodeKey = GetQueryString("qrcode_key", url);
+            using var generateJson = JsonDocument.Parse(await session.GetAsync(loginUrl));
+            var generateRoot = generateJson.RootElement;
+            if (generateRoot.GetProperty("code").GetInt32() != 0)
+                throw new InvalidDataException("获取登录二维码失败: " + generateRoot.GetProperty("message").GetString());
+            var generateData = generateRoot.GetProperty("data");
+            string url = generateData.GetProperty("url").GetString()!;
+            string qrcodeKey = generateData.GetProperty("qrcode_key").GetString()!;
             //Log(oauthKey);
             //Log(url);
             bool flag = false;
@@ -42,8 +48,12 @@ internal static class BBDownLoginUtil
             while (true)
             {
                 await Task.Delay(1000);
-                string w = await GetLoginStatusAsync(qrcodeKey);
-                int code = JsonDocument.Parse(w).RootElement.GetProperty("data").GetProperty("code").GetInt32();
+                using var pollJson = JsonDocument.Parse(await GetLoginStatusAsync(session, qrcodeKey));
+                var pollRoot = pollJson.RootElement;
+                if (pollRoot.GetProperty("code").GetInt32() != 0)
+                    throw new InvalidDataException("查询登录状态失败: " + pollRoot.GetProperty("message").GetString());
+                var pollData = pollRoot.GetProperty("data");
+                int code = pollData.GetProperty("code").GetInt32();
                 if (code == 86038)
                 {
                     LogColor("二维码已过期, 请重新执行登录指令.");
@@ -61,14 +71,17 @@ internal static class BBDownLoginUtil
                         flag = !flag;
                     }
                 }
-                else
+                else if (code == 0)
                 {
-                    string cc = JsonDocument.Parse(w).RootElement.GetProperty("data").GetProperty("url").ToString();
-                    Log("登录成功: SESSDATA=" + GetQueryString("SESSDATA", cc));
-                    //导出cookie, 转义英文逗号 否则部分场景会出问题
-                    await File.WriteAllTextAsync(Path.Combine(Program.APP_DIR, "BBDown.data"), cc[(cc.IndexOf('?') + 1)..].Replace("&", ";").Replace(",", "%2C"));
+                    string cookie = await session.GetLoginCookiesAsync(pollData.GetProperty("url").GetString() ?? "");
+                    await File.WriteAllTextAsync(Path.Combine(Program.APP_DIR, "BBDown.data"), cookie);
+                    Log("登录成功，凭据已保存到 BBDown.data。");
                     File.Delete("qrcode.png");
                     break;
+                }
+                else
+                {
+                    throw new InvalidDataException($"未知扫码登录状态: {code}，请重新登录。");
                 }
             }
         }
