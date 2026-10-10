@@ -219,6 +219,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
+          release_title="BBDown v${RELEASE_TAG#v}"
           shopt -s nullglob
           archives=(release-assets/*.zip)
           if [ "${#archives[@]}" -ne 6 ]; then
@@ -228,6 +229,6 @@ jobs:
           if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" "${archives[@]}" --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$RELEASE_TAG" "${archives[@]}" --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes --draft
+            gh release create "$RELEASE_TAG" "${archives[@]}" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$release_title" --generate-notes --draft
           fi
-          gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --draft=false
+          gh release edit "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "$release_title" --draft=false
