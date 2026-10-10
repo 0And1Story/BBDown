@@ -1,9 +1,13 @@
-[![img](https://img.shields.io/github/stars/nilaoda/BBDown?label=%E7%82%B9%E8%B5%9E)](https://github.com/nilaoda/BBDown)  [![img](https://img.shields.io/github/last-commit/nilaoda/BBDown?label=%E6%9C%80%E8%BF%91%E6%8F%90%E4%BA%A4)](https://github.com/nilaoda/BBDown)  [![img](https://img.shields.io/github/release/nilaoda/BBDown?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/nilaoda/BBDown/releases)  [![img](https://img.shields.io/github/license/nilaoda/BBDown?label=%E8%AE%B8%E5%8F%AF%E8%AF%81)](https://github.com/nilaoda/BBDown)  [![Build Latest](https://github.com/nilaoda/BBDown/actions/workflows/build_latest.yml/badge.svg)](https://github.com/nilaoda/BBDown/actions/workflows/build_latest.yml)
+[![img](https://img.shields.io/github/stars/0And1Story/BBDown?label=%E7%82%B9%E8%B5%9E)](https://github.com/0And1Story/BBDown)  [![img](https://img.shields.io/github/last-commit/0And1Story/BBDown?label=%E6%9C%80%E8%BF%91%E6%8F%90%E4%BA%A4)](https://github.com/0And1Story/BBDown)  [![img](https://img.shields.io/github/release/0And1Story/BBDown?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC)](https://github.com/0And1Story/BBDown/releases)  [![img](https://img.shields.io/github/license/0And1Story/BBDown?label=%E8%AE%B8%E5%8F%AF%E8%AF%81)](https://github.com/0And1Story/BBDown)  [![Build Latest](https://github.com/0And1Story/BBDown/actions/workflows/build_latest.yml/badge.svg)](https://github.com/0And1Story/BBDown/actions/workflows/build_latest.yml)
 
 > 本项目仅供个人学习、研究和非商业性用途。用户在使用本工具时，需自行确保遵守相关法律法规，特别是与版权相关的法律条款。开发者不对因使用本工具而产生的任何版权纠纷或法律责任承担责任。请用户在使用时谨慎，确保其行为合法合规，并仅在有合法授权的情况下使用相关内容。
 
 # BBDown
 一个命令行式哔哩哔哩下载器. Bilibili Downloader.
+
+> [!IMPORTANT]
+> 本修复版仅修复因B站接口变动等导致的功能问题，不增加任何新功能。若需要新功能，请使用其他 fork 版本。
+> 原仓库：[nilaoda/BBDown](https://github.com/nilaoda/BBDown)
 
 # 注意
 本软件混流时需要外部程序：
@@ -12,22 +16,15 @@
 * 杜比视界：ffmpeg5.0以上或新版mp4box.
 
 # 快速开始
-本软件已经以 [Dotnet Tool](https://www.nuget.org/packages/BBDown/) 形式发布  
+> [!NOTE]
+> 本修复版不以 Dotnet Tool 的形式发布
 
-如果你本地有dotnet环境，使用如下命令即可安装使用
-```
-dotnet tool install --global BBDown
-```
-
-如果需要更新bbdown，使用如下命令
-```
-dotnet tool update --global BBDown
-```
+如需使用本修复版本，请从下方 Releases 或 Actions 下载。
 
 # 下载
-Release版本：https://github.com/nilaoda/BBDown/releases
+Release版本：[Releases](https://github.com/0And1Story/BBDown/releases)
 
-自动构建的测试版本：https://github.com/nilaoda/BBDown/actions
+自动构建的测试版本：[Actions](https://github.com/0And1Story/BBDown/actions)
 
 # 开始使用
 目前命令行参数支持情况
@@ -226,7 +223,7 @@ BBDown logintv
 ```
 然后按照提示操作
  
-*PS: 如果登录报错`The type initializer for 'Gdip' threw an exception`，请参考 [#37](https://github.com/nilaoda/BBDown/issues/37) 解决*
+*PS: 如果登录报错`The type initializer for 'Gdip' threw an exception`，请参考 [原仓库 #37](https://github.com/nilaoda/BBDown/issues/37) 解决*
 
 手动加载网页cookie：
 ```
@@ -244,7 +241,7 @@ BBDown -tv -token "******" "https://www.bilibili.com/video/BV1qt4y1X7TW"
 
 ---
 
-> 根据 [#123](https://github.com/nilaoda/BBDown/issues/123#issuecomment-877583825) ，可以填写TV登录产生的`access_token`来给APP接口使用。可复制`BBDownTV.data`到`BBDownApp.data`使程序自动读取.
+> 根据 [原仓库 #123](https://github.com/nilaoda/BBDown/issues/123#issuecomment-877583825) ，可以填写TV登录产生的`access_token`来给APP接口使用。可复制`BBDownTV.data`到`BBDownApp.data`使程序自动读取.
 
 目前程序无法自动获取鉴权信息，推荐通过**抓包**来获取.
 
